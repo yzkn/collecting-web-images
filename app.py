@@ -8,7 +8,7 @@ import shutil
 
 
 datadir = 'data'
-maximg = 200
+maximg = 20 # 増やし過ぎるとHeroku routersのリクエストタイムアウトに引っかかる
 
 
 app = Flask(__name__)
