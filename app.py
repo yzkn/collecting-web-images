@@ -1,4 +1,8 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+#
+# Copyright (c) 2019 YA-androidapp(https://github.com/YA-androidapp) All rights reserved.
+
 from datetime import datetime
 from flask import Flask, make_response, Markup, render_template, request
 from icrawler.builtin import GoogleImageCrawler
