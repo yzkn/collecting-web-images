@@ -1,14 +1,16 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#
-# Copyright (c) 2019 YA-androidapp(https://github.com/YA-androidapp) All rights reserved.
-
 from datetime import datetime
 from flask import Flask, make_response, Markup, render_template, request
 from icrawler.builtin import GoogleImageCrawler
 import hashlib
 import os
 import shutil
+
+# background task
+from rq import Queue
+from worker import conn
+
+q = Queue(connection=conn)
 
 
 datadir = 'data'
@@ -22,7 +24,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/search', methods=['GET', 'POST'])
-def test():
+def search():
     term = ''
     try:
         if request.method == 'POST':
@@ -40,7 +42,7 @@ def test():
 
 
 @app.route('/search/<term>')
-def hello(term=''):
+def searchterm(term=''):
     try:
         if term == '':
             return render_template('index.html')
@@ -49,6 +51,25 @@ def hello(term=''):
     except Exception as e:
         # return str(e)
         pass
+
+
+@app.route('/enqueue/<term>')
+def enqueue(term=''):
+    try:
+        if term == '':
+            return render_template('index.html')
+        else:
+            print('term:')
+            print(term)
+            result = q.enqueue(collect, term)
+            print('result:')
+            print(result)
+            return result
+    except Exception as e:
+        print(str(e))
+        # return str(e)
+        pass
+
 
 def collect(term=''):
     if os.path.exists(datadir):
@@ -93,5 +114,4 @@ def collect(term=''):
         print('mimetype')
         return response
 
-if __name__ == '__main__':
-    app.run()
+app.run()
